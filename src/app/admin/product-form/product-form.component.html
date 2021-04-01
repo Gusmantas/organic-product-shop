@@ -1,0 +1,63 @@
+<!-- this div with class row is defined in bootstrap and helps us divide a page into two columns -->
+<div class="row">
+    <!-- This represents a column that takes half of the page
+        now, why md-6?
+        - Bootstrap divides page into 12 columns, and we want it to take half page.   -->
+        <!--left partition:  -->
+    <div class="col-md-6">
+        <form #form="ngForm" (ngSubmit)="save(form.value)">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <!-- When applying ngModel, import FormsModule from @angular/forms and add it to imports array -->
+                <input #title="ngModel" [(ngModel)]="product.title" name="title" id="title" type="text" class="form-control" required>
+                <div *ngIf="title.touched && title.invalid" class="alert alert-danger">
+                    Title is required.
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="price">Price</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">$</span>
+                      </div>
+                    <input #price="ngModel" [(ngModel)]="product.price" name="price" id="price" type="number" class="form-control" required [min]="0">
+                </div>
+                <div *ngIf="price.touched && price.invalid" class="alert alert-danger">
+                    <div *ngIf="price.errors.required">Price is required.</div>
+                    <div *ngIf="price.errors.min">Price should be at least $0.00 or higher.</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select #category="ngModel" [(ngModel)]="product.category" name="category" id="category"  class="form-control" required>
+                    <option value=""></option>
+                    <option *ngFor="let c of categories$ | async" [value]="c.key">{{ c.name }}</option>
+                </select>
+                <div *ngIf="category.touched && category.invalid" class="alert alert-danger">
+                    Category is required.
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="imageUrl">Image URL</label>
+                <!-- for "url" attribute (custom validator) to work, install ng2-validation, and import it in imports array in app.module.ts  -->
+                <input #imageUrl="ngModel" [(ngModel)]="product.imageUrl" name="imageUrl" id="imageUrl" type="text" class="form-control" required url>
+                <div *ngIf="imageUrl.touched && imageUrl.invalid" class="alert alert-danger">
+                    <div *ngIf="imageUrl.errors.required">Image URL is required.</div>
+                    <div *ngIf="imageUrl.errors.url"> Please enter a valid URL.</div>
+                    
+                </div>
+            </div>
+            <button class="btn btn-primary">Save</button>
+            <!-- 
+                To prevent default, from submitting form when clicking delete button, add 
+                type attribute on button like this: type="button"
+            -->
+            <button type="button" (click)="delete()" class="btn btn-danger">Delete</button>
+        </form>
+    </div>
+    <!-- right partition: -->
+    <div class="col-md-6">
+        <!-- Here we are using bootstrap card -->
+        <product-card [product]="product" [show-actions]="false"></product-card>
+    </div>
+</div>
